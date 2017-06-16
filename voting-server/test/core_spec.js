@@ -1,7 +1,9 @@
+// npm dependencies
 import {List, Map} from 'immutable';
 import {expect} from 'chai';
 
-import {setEntries} from '../src/core';
+// internal packages
+import {setEntries, next, vote} from '../src/core';
 
 describe('application logic', () => {
 
@@ -78,9 +80,26 @@ describe('application logic', () => {
         vote: Map({
           pair: List.of('Sunshine', 'Millions')
         }),
-        entries: List.off('127 Hours', 'Trainspotting', '28 Days Later')
+        entries: List.of('127 Hours', 'Trainspotting', '28 Days Later')
       }));
     });
+
+    it('marks winner when just one entry left', () => {
+      const state = Map({
+        vote: Map({
+          pair: List.of('Trainspotting', '28 Days Later'),
+          tally: Map({
+            'Trainspotting': 4,
+            '28 Days Later': 2
+          })
+        }),
+        entries: List()
+      });
+      const nextState = next(state);
+      expect(nextState).to.equal(Map({
+        winner: 'Trainspotting'
+      }));
+    })
 
   });
 
@@ -101,7 +120,7 @@ describe('application logic', () => {
             'Trainspotting': 1
           })
         }),
-        entries: List();
+        entries: List()
       }));
     });
 
@@ -114,7 +133,7 @@ describe('application logic', () => {
             '28 Days Later': 2
           })
         }),
-        entries: List();
+        entries: List()
       });
       const nextState = vote(state, 'Trainspotting');
       expect(nextState).to.equal(Map({
@@ -125,7 +144,7 @@ describe('application logic', () => {
             '28 Days Later': 2
           })
         }),
-        entries: List();
+        entries: List()
       }));
     });
 
